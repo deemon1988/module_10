@@ -11,7 +11,7 @@ class Bank():
         self.lock = threading.Lock()
 
     def deposit(self):
-        for _ in range(10):
+        for _ in range(100):
             self.lock.acquire()
             amount = random.randint(50, 500)
             print(f"Пополнение № {_}:")
@@ -22,10 +22,10 @@ class Bank():
                 self.balance += amount
                 print(f"Количество {amount}. Баланс: {self.balance}")
                 self.lock.release()
-            time.sleep(0.1)
+            time.sleep(0.001)
 
     def take(self):
-        for _ in range(10):
+        for _ in range(100):
             self.lock.acquire()
             amount = random.randint(50, 500)
             print(f"Снятие № {_}")
@@ -36,7 +36,7 @@ class Bank():
             else:
                 print(f"Количество - {amount}. Баланс недостаточен, освобождаю блокировку.")
                 self.lock.release()
-            time.sleep(0.1)
+            time.sleep(0.001)
 
     def __del__(self):
         print(f"\nИтоговый баланс: {self.balance}")
