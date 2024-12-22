@@ -28,3 +28,4 @@ thread2 = MyThread('thread2',3, 0.2)
 thread1.start()
 thread2.start()
 
+
