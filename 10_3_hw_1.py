@@ -1,3 +1,5 @@
+# Домашнее задание по теме "Блокировки и обработка ошибок"
+
 import random
 import threading
 import time
@@ -21,7 +23,6 @@ class Bank():
                 print(f"Количество {amount}. Баланс: {self.balance}")
                 self.lock.release()
             time.sleep(0.1)
-
 
     def take(self):
         for _ in range(10):
