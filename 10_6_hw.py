@@ -49,31 +49,32 @@ class Cafe():
 
 
     def discuss_guests(self):
-        guests_threads = {}
-        tables_data = {}
+        guests_threads = []
+        tables_data = []
         empty_tables = []
         for thread in threading.enumerate():
             if isinstance(thread, Guest):
-                guests_threads[thread.name] = thread
+                guests_threads.append(thread)
         for table in self.tables:
-            if table.guest.name in guests_threads:
-                tables_data[table.guest] = table
+            if table.guest in guests_threads:
+                tables_data.append(table)
 
 
-        for name, guest_th in guests_threads.items():
+
+        for index, guest in enumerate(guests_threads):
             while not self.queue.empty():
-                if not guest_th.is_alive():
-                    print(f"{name} покушал(-а) и ушёл(ушла)")
+                if not guest.is_alive():
+                    print(f"{guest.name} покушал(-а) и ушёл(ушла)")
 
-                    print(f"Стол номер {tables_data[guest_th].number} свободен")
+                    print(f"Стол номер {tables_data[index].number} свободен")
 
-                    tables_data[guest_th].guest = None
-                    empty_tables.append(tables_data[guest_th])
+                    tables_data[index].guest = None
+                    empty_tables.append(tables_data[index])
                     await_guest = self.queue.get()
 
-                    print(f"{await_guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {tables_data[guest_th].number}")
+                    print(f"{await_guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {tables_data[index].number}")
 
-                    tables_data[guest_th].guest =  await_guest
+                    tables_data[index].guest =  await_guest
 
                     await_guest.start()
 
