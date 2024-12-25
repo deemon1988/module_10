@@ -61,26 +61,28 @@ class Cafe():
         while len(guests_threads):
             for guest in guests_threads:
                 guest.join()
-                if guest.is_alive():
+                if guest.is_alive():   # не нужно ?
                     is_guest = True  # guest.join() ?
                 else:
                     print(f"{guest.name} покушал(-а) и ушёл(ушла)")
-                    #is_guest = False
                     empty_table = [t for t in tables_data if t.guest == guest]
+                    table = empty_table.pop()
+                    print(f"Стол номер {table.number} свободен")
+
                     guests_threads.remove(guest)
                     print(f"Оставшиеся потоки: {guests_threads}")
                     print()
 
-                    table = empty_table.pop()
+
                     #tables_data = list(map(lambda x: table if x.guest == guest else x, tables_data))
                     if not self.queue.empty():
-                        print(f"Стол номер {table.number} свободен")
+
                         await_guest = self.queue.get()
                         print(f"{await_guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {table.number}")
                         table.guest =  await_guest
                         guests_threads.append(await_guest)
                         await_guest.start()
-                        is_guest = True
+
 
         print(threading.enumerate())
         print(f"Строка на выходе")
@@ -88,12 +90,31 @@ class Cafe():
 
 
 
-table1 = Table(1)
-table2 = Table(2)
-guest1 = Guest('Vasya')
-guest2 = Guest('Vanya')
-guest3 = Guest('Danya')
-cafe = Cafe(table1, table2)
+# table1 = Table(1)
+# table2 = Table(2)
+# guest1 = Guest('Vasya')
+# guest2 = Guest('Vanya')
+# guest3 = Guest('Danya')
+# cafe = Cafe(table1, table2)
+#
+# cafe.guest_arrival(guest1, guest2, guest3)
+# cafe.discuss_guests()
 
-cafe.guest_arrival(guest1, guest2, guest3)
+
+
+
+# Создание столов
+tables = [Table(number) for number in range(1, 6)]
+# Имена гостей
+guests_names = [
+'Maria', 'Oleg', 'Vakhtang', 'Sergey', 'Darya', 'Arman',
+'Vitoria', 'Nikita', 'Galina', 'Pavel', 'Ilya', 'Alexandra'
+]
+# Создание гостей
+guests = [Guest(name) for name in guests_names]
+# Заполнение кафе столами
+cafe = Cafe(*tables)
+# Приём гостей
+cafe.guest_arrival(*guests)
+# Обслуживание гостей
 cafe.discuss_guests()
