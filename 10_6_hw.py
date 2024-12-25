@@ -8,9 +8,9 @@ from random import randint
 
 
 class Table():
-    def __init__(self, number, name=None):
+    def __init__(self, number, guest=None):
         self.number = number
-        self.name = name
+        self.guest = guest
 
 
 class Guest(threading.Thread):
@@ -39,11 +39,9 @@ class Cafe():
                 except StopIteration:
                     table = None
                 if not table == None:
-                    self.tables[index].name = guest.name
-                    table.name = guest.name
+                    self.tables[index].guest = guest
                     print(f"{guest.name} сел за стол номер {table.number}")
                     guest.start()
-                    print(guest)
                 else:
                     print(f"{guest.name} в очереди")
                     self.queue.put(guest)
@@ -51,33 +49,34 @@ class Cafe():
 
 
     def discuss_guests(self):
-        guests_threads = []
-        names = {}
+        guests_threads = {}
         tables_data = {}
         empty_tables = []
         for thread in threading.enumerate():
             if isinstance(thread, Guest):
-                guests_threads.append(thread)
-                names[thread.getName()] = thread
+                guests_threads[thread.name] = thread
         for table in self.tables:
-            if table.name in names:
-                tables_data[table.name] = table
+            if table.guest.name in guests_threads:
+                tables_data[table.guest] = table
 
 
-        for guest_th in guests_threads:
+        for name, guest_th in guests_threads.items():
             while not self.queue.empty():
                 if not guest_th.is_alive():
-                    print(f"{guest_th.name} покушал(-а) и ушёл(ушла)")
+                    print(f"{name} покушал(-а) и ушёл(ушла)")
 
-                    print(f"Стол номер {tables_data[guest_th.name].number} свободен")
-                    tables_data[guest_th.name].guest = None
-                    empty_tables.append(tables_data[guest_th.name])
-                for i in empty_tables:
-                    if i.guest == None:
-                        guest = self.queue.get()
-                        i.name = guest.name
-                        print(f"{self.queue.get().name} вышел(-ла) из очереди и сел(-а) за стол номер {i.number}")
-                        guest.start()
+                    print(f"Стол номер {tables_data[guest_th].number} свободен")
+
+                    tables_data[guest_th].guest = None
+                    empty_tables.append(tables_data[guest_th])
+                    await_guest = self.queue.get()
+
+                    print(f"{await_guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {tables_data[guest_th].number}")
+
+                    tables_data[guest_th].guest =  await_guest
+
+                    await_guest.start()
+
 
 
 
