@@ -54,10 +54,10 @@ class Cafe():
             if isinstance(thread, Guest):
                 guests_threads.append(thread)
         for table in self.tables:
-            if table.guest in guests_threads:
+            if table.guest in guests_threads:   # другой алгоритм ?
                 tables_data.append(table)
 
-        #is_guest = True
+
         while len(guests_threads):
             for guest in guests_threads:
                 guest.join()
