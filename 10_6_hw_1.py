@@ -2,6 +2,7 @@
 
 import threading
 import time
+from itertools import zip_longest
 from queue import Queue
 from random import randint
 
@@ -12,7 +13,7 @@ class Table():
         self.guest = guest
 
     def __str__(self):
-        return f"{self.number}, {self.guest}"
+        return f"Стол: {self.number}, {self.guest.name}"
 
 class Guest(threading.Thread):
     def __init__(self, name):
@@ -29,6 +30,16 @@ class Cafe():
         self.queue = Queue()
 
     def guest_arrival(self, *guests):
+        tables = [t for t in self.tables]
+
+        for tab, guest in zip_longest(tables, guests):
+            if not tab == None and not guest == None:
+                tab.guest = guest
+                print(f"{guest.name} сел за стол номер {tab.number}")
+            elif tab == None and not guest == None:
+                self.queue.put(guest)
+                print(f"{guest.name} в очереди")
+
         it = iter(self.tables)
         for index, guest in enumerate(guests):
             if len(self.tables):
