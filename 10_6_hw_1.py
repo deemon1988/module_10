@@ -21,7 +21,9 @@ class Guest(threading.Thread):
         self.name = name
 
     def run(self):
-        time.sleep(randint(3,10))
+        r_time = randint(3,10)
+        print(r_time)
+        time.sleep(r_time)
 
 
 class Cafe():
@@ -30,73 +32,48 @@ class Cafe():
         self.queue = Queue()
 
     def guest_arrival(self, *guests):
-        tables = [t for t in self.tables]
 
-        for tab, guest in zip_longest(tables, guests):
+        for tab, guest in zip_longest(self.tables, guests):
             if not tab == None and not guest == None:
                 tab.guest = guest
                 print(f"{guest.name} сел за стол номер {tab.number}")
+                tab.guest.start()
+
             elif tab == None and not guest == None:
                 self.queue.put(guest)
                 print(f"{guest.name} в очереди")
 
-        it = iter(self.tables)
-        for index, guest in enumerate(guests):
-            if len(self.tables):
-                global table
-                try:
-                    table = next(it)
-                except StopIteration:
-                    table = None
-                if not table == None:
-                    self.tables[index].guest = guest
-                    print(f"{guest.name} сел за стол номер {table.number}")
-                    guest.start()
-                else:
-                    print(f"{guest.name} в очереди")
-                    self.queue.put(guest)
-                    continue
+        # for i in self.tables:
+        #     i.guest.start()
+
+
 
 
     def discuss_guests(self):
-        guests_threads = []
-        tables_data = []
-        for thread in threading.enumerate():
-            if isinstance(thread, Guest):
-                guests_threads.append(thread)
-        for table in self.tables:
-            if table.guest in guests_threads:   # другой алгоритм ?
-                tables_data.append(table)
 
-
-        while len(guests_threads):
-            for guest in guests_threads:
-                guest.join()
-                if guest.is_alive():   # не нужно ?
-                    is_guest = True  # guest.join() ?
-                else:
-                    print(f"{guest.name} покушал(-а) и ушёл(ушла)")
-                    empty_table = [t for t in tables_data if t.guest == guest]
-                    table = empty_table.pop()
-                    print(f"Стол номер {table.number} свободен")
-
-                    guests_threads.remove(guest)
-                    print(f"Оставшиеся потоки: {guests_threads}")
-                    print()
-
-
-                    #tables_data = list(map(lambda x: table if x.guest == guest else x, tables_data))
-                    if not self.queue.empty():
-
+        def guest_alive():
+            for i in self.tables:
+                if not i.guest == None:
+                    if i.guest.is_alive():
+                        yield i
+                    elif not self.queue.empty():
+                        print(f"{i.guest.name} покушал(-а) и ушёл(ушла)")
+                        print(f"Стол номер {i.number} свободен")
                         await_guest = self.queue.get()
-                        print(f"{await_guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {table.number}")
-                        table.guest =  await_guest
-                        guests_threads.append(await_guest)
-                        await_guest.start()
+                        print(f"{await_guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {i.number}")
+                        i.guest = await_guest
+                        i.guest.start()
+                        yield i
+                    else:
+                        print(f"{i.guest.name} покушал(-а) и ушёл(ушла)")
+                        print(f"Стол номер {i.number} свободен")
+                        i.guest = None
+        while True:
+            guests_alive = list(guest_alive())
+            if not len(guests_alive):
+                print("Empty")
+                break
 
-
-        print(threading.enumerate())
-        print(f"Строка на выходе")
 
 
 
@@ -125,7 +102,11 @@ guests_names = [
 guests = [Guest(name) for name in guests_names]
 # Заполнение кафе столами
 cafe = Cafe(*tables)
+
+start_time = time.time()
 # Приём гостей
 cafe.guest_arrival(*guests)
 # Обслуживание гостей
 cafe.discuss_guests()
+end_time = time.time()
+print(f"Время выполнения: {end_time - start_time} c.")
