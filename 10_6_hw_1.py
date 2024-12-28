@@ -70,16 +70,6 @@ class Cafe():
                 break
 
 
-# table1 = Table(1)
-# table2 = Table(2)
-# guest1 = Guest('Vasya')
-# guest2 = Guest('Vanya')
-# guest3 = Guest('Danya')
-# cafe = Cafe(table1, table2)
-#
-# cafe.guest_arrival(guest1, guest2, guest3)
-# cafe.discuss_guests()
-
 
 # Создание столов
 tables = [Table(number) for number in range(1, 6)]
