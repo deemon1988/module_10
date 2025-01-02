@@ -1,16 +1,17 @@
+import threading
+
 import requests
 
 sites = [
-    'https://www.fl.ru/',
-    'https://www.weblancer.net',
-    'https://www.freelancejob.ru/',
-    'https://kwork.ru',
-    'https://work-zilla.com/',
-    'https://iklife.ru/udalennaya-rabota-i-frilans/poisk-raboty/vse-samye-luchshie-sajty-i-birzhi-v-internete.html',
+    #'https://www.fl.ru/',
+     'https://www.weblancer.net'
+    # 'https://www.freelancejob.ru/',
+    # 'https://kwork.ru',
+    # 'https://work-zilla.com/',
+    # 'https://iklife.ru/udalennaya-rabota-i-frilans/poisk-raboty/vse-samye-luchshie-sajty-i-birzhi-v-internete.html',
 ]
 
 from html.parser import HTMLParser
-
 
 class HTMLTextExtractor(HTMLParser):
     """Class for extracting plain text from HTML content."""
