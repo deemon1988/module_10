@@ -26,7 +26,8 @@ def fishing(name, worms):
         print(f'    {fish} - {count}')
 
 
-fishing(name='Вася', worms=10)
+#fishing(name='Вася', worms=10)
+
 
 
 # А теперь создадим второго рыбака, пошедшего на рыбалку ОДНОВРЕМЕННО с первым
@@ -60,7 +61,7 @@ kolya_catch = defaultdict(int)
 fishing(name='Коля', worms=10, catch=kolya_catch)
 
 thread.join()
-for name, catch in (('Вася', vasya_catch), ('Вася', kolya_catch)):
+for name, catch in (('Вася', vasya_catch), ('Коля', kolya_catch)):
     print(f'Итого рыбак {name} поймал:')
     for fish, count in catch.items():
         print(f'    {fish} - {count}')
@@ -104,7 +105,7 @@ vasya.join()
 kolya.join()
 
 print('.' * 20, 'Итак, они вернулись')
-
+input()
 
 # Если нужен результат выполнения, то просто делаем атрибут класса
 class Fisher(Thread):
@@ -194,7 +195,7 @@ for fisher in (vasya, kolya):
     for fish, count in fisher.catch.items():
         print(f'    {fish} - {count}')
 
-
+input()
 # Обрабатывать ошибки нужно в самом потоке
 class Fisher(Thread):
 
